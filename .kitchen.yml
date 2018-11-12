@@ -1,26 +1,50 @@
 ---
 driver:
   name: vagrant
+driver_config:
+  customize:
+    memory: 1024
+    cpus: 1
 
 provisioner:
   name: chef_zero
-  # You may wish to disable always updating cookbooks in CI or other testing environments.
-  # For example:
-  #   always_update_cookbooks: <%= !ENV['CI'] %>
-  always_update_cookbooks: true
-
-verifier:
-  name: inspec
+  attributes:
+    java:
+      jdk_version: "8"
+    logstash:
+      elasticsearch_uri: 'http://127.0.0.1:9200'
+    rsyslog:
+      server_ip: '127.0.0.1'
+      port: '5959'
 
 platforms:
+  - name: ubuntu-14.04
+    run_list:
+      - recipe[apt::default]
+      - recipe[java::default]
   - name: ubuntu-16.04
+    run_list:
+      - recipe[apt::default]
+      - recipe[java::default]
+  - name: debian-8
+    run_list:
+      - recipe[apt::default]
+      - recipe[java::default]
+  - name: debian-9
+    run_list:
+      - recipe[apt::default]
+      - recipe[java::default]
+  - name: centos-6
+    run_list:
+      - recipe[java::default]
   - name: centos-7
+    run_list:
+      - recipe[java::default]
+  - name: opensuse-leap-15
+    run_list:
+      - recipe[java::default]
 
 suites:
-  - name: default
+  - name: server
     run_list:
-      - recipe[logstash_lwrp::default]
-    verifier:
-      inspec_tests:
-        - test/integration/default
-    attributes:
+      - recipe[logstash_lwrp-test::default]

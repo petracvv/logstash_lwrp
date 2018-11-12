@@ -1,0 +1,5 @@
+output {
+  elasticsearch {
+    hosts => ["<%= node['logstash']['elasticsearch_uri'] %>"]
+  }
+}

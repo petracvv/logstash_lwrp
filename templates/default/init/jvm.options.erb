@@ -1,0 +1,66 @@
+## JVM configuration
+
+# Xms represents the initial size of total heap space
+# Xmx represents the maximum size of total heap space
+
+-Xms<%= @xms%>
+-Xmx<%= @xmx%>
+
+################################################################
+## Expert settings
+################################################################
+##
+## All settings below this section are considered
+## expert settings. Don't tamper with them unless
+## you understand what you are doing
+##
+################################################################
+
+## GC configuration
+<% @gc_opts.each do |gc_opt|%>
+<%= gc_opt%>
+<% end%>
+
+# Other Java options
+
+<% @java_opts.each do |java_opt|%>
+<%= java_opt%>
+<% end%>
+
+# Other recommended options
+
+## Locale
+# Set the locale language
+#-Duser.language=en
+
+# Set the locale country
+#-Duser.country=US
+
+# Set the locale variant, if any
+#-Duser.variant=
+
+## basic
+
+# set the I/O temp directory
+#-Djava.io.tmpdir=$HOME
+
+# use our provided JNA always versus the system one
+#-Djna.nosys=true
+
+## heap dumps
+
+# specify an alternative path for heap dumps
+# ensure the directory exists and has sufficient space
+#-XX:HeapDumpPath=${LOGSTASH_HOME}/heapdump.hprof
+
+## GC logging
+#-XX:+PrintGCDetails
+#-XX:+PrintGCTimeStamps
+#-XX:+PrintGCDateStamps
+#-XX:+PrintClassHistogram
+#-XX:+PrintTenuringDistribution
+#-XX:+PrintGCApplicationStoppedTime
+
+# log GC status to a file with time stamps
+# ensure the directory exists
+#-Xloggc:${LS_GC_LOG_FILE}
