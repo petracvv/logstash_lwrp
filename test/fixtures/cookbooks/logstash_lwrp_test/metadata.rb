@@ -1,4 +1,4 @@
-name 'logstash_lwrp-test'
+name 'logstash_lwrp_test'
 version '1.0.0'
 
 depensd 'java'

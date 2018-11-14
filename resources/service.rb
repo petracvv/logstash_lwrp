@@ -22,7 +22,7 @@ property :instance,                 String, name_property: true
 property :service_name,             String, default: lazy { |r| "logstash_#{r.instance}" }
 property :description,              String, default: 'logstash'
 property :ls_settings_dir,          String, default: lazy { |r| "/opt/logstash_#{r.instance}/config" }
-property :ls_opts,                  Array, default: lazy { |r| ["--path.settings #{r.ls_settings_dir}"]
+property :ls_opts,                  Array, default: lazy { |r| ["--path.settings #{r.ls_settings_dir}"] }
 property :ls_pidfile,               String, default: lazy { |r| "/var/run/#{r.service_name}.pid" }
 property :ls_gc_log_file,           String, default: lazy { |r| "/opt/logstash_#{r.instance}/logs/#{r.service_name}_gc.log" }
 property :ls_open_files,            Integer, default: 16384

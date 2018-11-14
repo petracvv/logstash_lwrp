@@ -1,13 +1,18 @@
 ---
 driver:
   name: vagrant
+  vm_hostname: logstash-kitchen
 driver_config:
   customize:
     memory: 1024
     cpus: 1
 
+verifier:
+  name: inspec
+
 provisioner:
   name: chef_zero
+  product_name: chef
   attributes:
     java:
       jdk_version: "8"

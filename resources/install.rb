@@ -17,7 +17,7 @@
 # limitations under the License.
 # License:: Apache 2.0
 
-# Installation pattern adapted from official tomcat cookbook.
+# Resource based on install resource from official tomcat cookbook.
 # https://github.com/chef-cookbooks/tomcat/blob/master/resources/install.rb
 
 resource_name :logstash_install
@@ -70,7 +70,7 @@ action :install do
     source new_resource.tarball_uri
     path tarball_path
     verify { |tarball| validate_checksum(tarball) }
-    only_if { ::Dir.empty?(install_path) }  # Avoid redownloading entire logstash tarball every chef run
+    only_if { ::Dir.empty?(new_resource.install_path) }  # Avoid redownloading entire logstash tarball every chef run
     action :create
     notifies :run, 'execute[extract logstash tarball]', :immediately
   end
@@ -79,15 +79,6 @@ action :install do
     command "tar -xzf #{tarball_path} -C #{new_resource.install_path} --strip-components=1"
     creates ::File.join(new_resource.install_path, 'LICENSE.txt')
     action :nothing
-  end
-
-  # Need this for easier upgrading
-  file "#{logstash_home}/VERSION" do
-    owner new_resource.ls_user
-    group new_resource.ls_user
-    mode '0640'
-    content new_resource.version
-    action :create
   end
 
   execute "chown logstash installation as #{new_resource.ls_user}" do
@@ -105,9 +96,14 @@ action :upgrade do
   # If there is an existing installation
   if ::File.symlink?(logstash_home)
     oldinstall = ::File.realpath(logstash_home)
-    oldversion = ::File.open("#{oldinstall}/VERSION", &:readline)
+    oldversion = oldinstall[/[0-9]+_[0-9]+_[0-9]+/].tr('_', '.')
 
-    new_resource.run_action(:install)
+    log 'stop logstash service before upgrade' do
+      notifies :stop, "logstash_service[#{new_resource.instance}]", :immediately
+      not_if { oldversion.eql?(new_resource.version) }
+    end
+
+    action_install
   
     execute 'copy persistent data from old install' do
       command "cp -a #{oldinstall}/data #{logstash_home}/"
@@ -116,7 +112,7 @@ action :upgrade do
       not_if { oldversion.eql?(new_resource.version) }
     end
   else # Otherwise just run the install action
-    new_resource.run_action(:install)
+    action_install
   end
 end
 
@@ -141,8 +137,6 @@ action_class do
     raise
   end
 
-  # validate the mirror checksum against the on disk checksum
-  # return true if they match. Append .bad to the cached copy to prevent using it next time
   def validate_checksum(file_to_check)
     desired = fetch_checksum
     # Logstash uses sha512 for their checksums

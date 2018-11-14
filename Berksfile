@@ -6,5 +6,5 @@ metadata
 group :integration do
   cookbook 'apt'
   cookbook 'java'
-  cookbook 'logstash_lwrp-test', path: 'test/fixtures/cookbooks/logstash_lwrp-test'
+  cookbook 'logstash_lwrp_test', path: 'test/fixtures/cookbooks/logstash_lwrp_test'
 end
