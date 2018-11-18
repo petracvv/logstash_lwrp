@@ -2,7 +2,12 @@
 
 This file is used to list changes made in each version of the logstash_lwrp cookbook.
 
-## 1.0.0 (2018-11-18)
+## v1.0.1 (2018-11-18)
+
+- Add CONTRIBUTING.md file
+- Reformat README so rendering works on github and supermarket
+
+## v1.0.0 (2018-11-18)
 
 Initial release.
 

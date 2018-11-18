@@ -3,7 +3,7 @@ maintainer 'Mihai Petracovici'
 maintainer_email 'petracvv@users.noreply.github.com'
 license 'Apache-2.0'
 description 'Resource-driven Logstash cookbook'
-version '1.0.0'
+version '1.0.1'
 
 issues_url 'https://github.com/petracvv/logstash_lwrp/issues'
 source_url 'https://github.com/petracvv/logstash_lwrp'
