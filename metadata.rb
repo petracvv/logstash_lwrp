@@ -10,7 +10,8 @@ source_url 'https://github.com/petracvv/logstash_lwrp'
 
 chef_version '>= 13.0'
 
-supports 'ubuntu', '>= 16.04'
-supports 'debian', '>= 8'
-supports 'centos', '>= 6'
-
+supports 'ubuntu'
+supports 'debian'
+supports 'centos'
+supports 'redhat'
+supports 'oracle'
