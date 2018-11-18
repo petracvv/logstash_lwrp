@@ -15,7 +15,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# License:: Apache 2.0
 
 # Resource based on install resource from official tomcat cookbook.
 # https://github.com/chef-cookbooks/tomcat/blob/master/resources/install.rb
@@ -23,7 +22,7 @@
 resource_name :logstash_install
 
 property :instance, String, name_property: true
-property :version,  String, default: '6.4.3', callbacks: {
+property :version,  String, default: '6.5.0', callbacks: {
   'should be in X.Y.Z format' => lambda { |v|
     v =~ /\d+.\d+.\d+/
   },
@@ -103,8 +102,14 @@ action :upgrade do
       not_if { oldversion.eql?(new_resource.version) }
     end
 
-    action_install
-  
+    # Needs to be in a block or else runs at compile-time
+    ruby_block 'Install new version' do
+      block do
+        action_install
+      end
+      action :run
+    end
+    
     execute 'copy persistent data from old install' do
       command "cp -a #{oldinstall}/data #{logstash_home}/"
       user new_resource.ls_user

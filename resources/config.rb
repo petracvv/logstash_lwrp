@@ -28,13 +28,10 @@ property :log_format, String, default: 'plain', equal_to: %w( plain json )
 property :pipeline_defaults, Hash
 
 action :create do
-  lsuser = logstash_user
-  lsgroup = logstash_group
-
   template "#{logstash_home}/config/logstash.yml" do
     source 'config/logstash.yml.erb'
-    owner lsuser
-    group lsgroup
+    owner logstash_user
+    group logstash_group
     mode new_resource.mode
     cookbook 'logstash_lwrp'
     variables(

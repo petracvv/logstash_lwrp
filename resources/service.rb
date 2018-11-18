@@ -18,37 +18,40 @@
 #
 resource_name :logstash_service
 
-property :instance,                 String, name_property: true
-property :service_name,             String, default: lazy { |r| "logstash_#{r.instance}" }
-property :description,              String, default: 'logstash'
-property :ls_settings_dir,          String, default: lazy { |r| "/opt/logstash_#{r.instance}/config" }
-property :ls_opts,                  Array, default: lazy { |r| ["--path.settings #{r.ls_settings_dir}"] }
-property :ls_pidfile,               String, default: lazy { |r| "/var/run/#{r.service_name}.pid" }
-property :ls_gc_log_file,           String, default: lazy { |r| "/opt/logstash_#{r.instance}/logs/#{r.service_name}_gc.log" }
-property :ls_open_files,            Integer, default: 16384
-property :ls_nice,                  Integer, default: 19, callbacks: {
+property :instance, String, name_property: true
+property :service_name, String, default: lazy { |r| "logstash_#{r.instance}" }
+property :description, String, default: 'logstash'
+property :javacmd, String, default: '/usr/bin/java'
+property :ls_settings_dir, String, default: lazy { |r| "/opt/logstash_#{r.instance}/config" }
+property :ls_opts, Array, default: lazy { |r| ["--path.settings #{r.ls_settings_dir}"] }
+property :ls_pidfile, String, default: lazy { |r| "/var/run/#{r.service_name}.pid" }
+property :ls_gc_log_file, String, default: lazy { |r| "/opt/logstash_#{r.instance}/logs/#{r.service_name}_gc.log" }
+property :ls_open_files, Integer, default: 16384
+property :ls_nice, Integer, default: 19, callbacks: {
   'should be a valid nice value' => lambda { |n|
     n >= -20 && n <= 19
   },
 }
-property :ls_prestart,              String
-property :xms,                      String, default: node['memory'] ? "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M" : '1G'
-property :xmx,                      String, default: node['memory'] ? "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M" : '1G'
-property :gc_opts,                  Array, default: ['XX:+UseParNewGC -XX:+UseConcMarkSweepGC',
-                                                     '-XX:CMSInitiatingOccupancyFraction=75',
-                                                     '-XX:+UseCMSInitiatingOccupancyOnly']
-property :java_opts,                Array, default: ['-Djava.awt.headless=true',
-                                                     '-Dfile.encoding=UTF-8',
-                                                     '-Djruby.compile.invokedynamic=true',
-                                                     '-Djruby.jit.threshold=0',
-                                                     '-XX:+HeapDumpOnOutOfMemoryError',
-                                                     '-Djava.security.egd=file:/dev/urandom']
+property :ls_prestart, String
+property :xms, String, default: node['memory'] ? "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M" : '1G'
+property :xmx, String, default: node['memory'] ? "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M" : '1G'
+property :gc_opts, Array, default: ['-XX:+UseParNewGC',
+                                    '-XX:+UseConcMarkSweepGC',
+                                    '-XX:CMSInitiatingOccupancyFraction=75',
+                                    '-XX:+UseCMSInitiatingOccupancyOnly']
+property :java_opts, Array, default: ['-Djava.awt.headless=true',
+                                      '-Dfile.encoding=UTF-8',
+                                      '-Djruby.compile.invokedynamic=true',
+                                      '-Djruby.jit.threshold=0',
+                                      '-XX:+HeapDumpOnOutOfMemoryError',
+                                      '-Djava.security.egd=file:/dev/urandom']
 
 action :start do
   create_init
 
   service new_resource.service_name do
     supports restart: true, status: true
+    provider service_provider
     action :start
   end
 end
@@ -56,6 +59,7 @@ end
 action :stop do
   service new_resource.service_name do
     supports status: true
+    provider service_provider
     action :stop
   end
 end
@@ -63,6 +67,7 @@ end
 action :restart do
   service new_resource.service_name do
     supports status: true
+    provider service_provider
     action :restart
   end
 end
@@ -72,6 +77,7 @@ action :enable do
 
   service new_resource.service_name do
     supports status: true
+    provider service_provider
     action :enable
   end
 end
@@ -79,14 +85,29 @@ end
 action_class do
   include LogstashLWRP::Helpers
 
-  def create_init
-    lsuser = logstash_user
-    lsgroup = logstash_group
+  def service_provider
+    available = Chef::Platform::ServiceHelpers.service_resource_providers
 
+    # Service providers in same order of preference as the logstash generator 
+    case
+    when available.include?(:systemd)
+      Chef::Provider::Service::Systemd
+    when available.include?(:upstart)
+      Chef::Provider::Service::Upstart
+    when available.include?(:debian)
+      Chef::Provider::Service::Init::Debian
+    when available.include?(:redhat)
+      Chef::Provider::Service::Init::Redhat
+    else
+      Chef::Log.fatal!('Unsupported init system')
+    end
+  end
+
+  def create_init
     template "#{new_resource.ls_settings_dir}/jvm.options" do
       source 'init/jvm.options.erb'
-      owner lsuser
-      group lsgroup
+      owner logstash_user
+      group logstash_group
       cookbook 'logstash_lwrp'
       variables(
         xms: new_resource.xms,
@@ -100,16 +121,18 @@ action_class do
 
     template "#{new_resource.ls_settings_dir}/startup.options" do
       source 'init/startup.options.erb'
-      owner lsuser
-      group lsgroup
+      owner logstash_user
+      group logstash_group
+      mode '0640'
       cookbook 'logstash_lwrp'
       variables(
+        javacmd: new_resource.javacmd,
         ls_home: logstash_home,
         ls_settings_dir: new_resource.ls_settings_dir,
         ls_opts: new_resource.ls_opts,
         ls_pidfile: new_resource.ls_pidfile,
-        ls_user: lsuser,
-        ls_group: lsgroup,
+        ls_user: logstash_user,
+        ls_group: logstash_group,
         ls_gc_log_file: new_resource.ls_gc_log_file,
         ls_open_files: new_resource.ls_open_files,
         ls_nice: new_resource.ls_nice,
@@ -119,7 +142,7 @@ action_class do
       )
       action :create
       notifies :run, 'execute[Generate service file]', :immediately
-      notifies :restart, "service[#{new_resource.service_name}]"
+      notifies :restart, "logstash_service[#{new_resource.instance}]", :delayed
     end
 
     execute 'Generate service file' do

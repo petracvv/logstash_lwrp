@@ -9,7 +9,7 @@
 ################################################################################
 
 # Override Java location
-#JAVACMD=/usr/bin/java
+JAVACMD=<%= @javacmd%>
 
 # Set a home directory
 LS_HOME=<%= @ls_home%>
@@ -20,8 +20,9 @@ LS_SETTINGS_DIR=<%= @ls_settings_dir%>
 # Arguments to pass to logstash
 LS_OPTS="<%= @ls_opts.join(' ')%>"
 
-# Arguments to pass to java
-LS_JAVA_OPTS=""
+# Arguments to pass to java.
+# jvm.options config file is used instead of direct flags
+# LS_JAVA_OPTS=""
 
 # pidfiles aren't used the same way for upstart and systemd; this is for sysv users.
 LS_PIDFILE=<%= @ls_pidfile%>
@@ -44,7 +45,7 @@ LS_NICE=<%= @ls_nice%>
 # This is useful when running multiple instances of Logstash on the same
 # physical box or vm
 SERVICE_NAME="<%= @ls_service_name%>"
-SERVICE_DESCRIPTION="<%= @ls_service_description%>
+SERVICE_DESCRIPTION="<%= @ls_service_description%>"
 
 # If you need to run a command or script before launching Logstash, put it
 # between the lines beginning with `read` and `EOM`, and uncomment those lines.

@@ -21,7 +21,7 @@ resource_name :logstash_pipeline
 property :pipeline_id, String, name_property: true
 property :instance, String, required: true
 property :mode, String, default: '0640'
-property :pipeline_workers, [Integer, String], default: node['cpu']['cores']
+property :pipeline_workers, Integer, default: node['cpu']['cores']
 property :config_string, String
 property :config_templates, Array
 property :pipeline_settings, Hash
@@ -39,16 +39,29 @@ action :create do
   options['path.config'] = pipeline_home if property_is_set?(:config_templates)
   options = options.merge(new_resource.pipeline_settings) if property_is_set?(:pipeline_settings)
 
-  # Wrap around logstash_pipelines for accumulator
+  # Accumulator in template resource
   with_run_context :root do
-    edit_resource(:logstash_pipelines, new_resource.instance) do
+    edit_resource(:template, "#{logstash_home}/config/pipelines.yml") do
+      source 'config/pipelines.yml.erb'
+      owner logstash_user 
+      group logstash_group 
+      mode new_resource.mode
+      cookbook 'logstash_lwrp'
+      variables['pipelines'] ||= []
+      variables['pipelines'] << options
       action :nothing
-      pipelines(pipelines + [options])
+      delayed_action :create
+      notifies :run, 'execute[verify logstash config]', :delayed
     end
-  end
 
-  log 'add pipeline' do
-    notifies :deploy, "logstash_pipelines[#{new_resource.instance}]", :delayed
+    # Need to use find_resource to avoid multiple service restarts
+    find_resource(:execute, 'verify logstash config') do
+      command "#{logstash_home}/bin/logstash --path.settings #{logstash_home}/config -t"
+      user logstash_user
+      group logstash_group
+      action :nothing
+      notifies :restart, "logstash_service[#{new_resource.instance}]", :immediately
+    end
   end
 end
 
@@ -71,13 +84,10 @@ action_class do
   end
 
   def deploy_pipeline
-    lsuser = logstash_user
-    lsgroup = logstash_group
-
     %W( #{logstash_home}/pipelines #{pipeline_home} ).each do |path|
       directory path do
-        owner lsuser
-        group lsgroup
+        owner logstash_user
+        group logstash_group
         mode '0550'
         action :create
       end
@@ -86,8 +96,8 @@ action_class do
     new_resource.config_templates.each do |config|
       template "#{pipeline_home}/#{::File.basename(config, '.erb')}" do
         source config
-        owner lsuser
-        group lsgroup
+        owner logstash_user
+        group logstash_group
         mode new_resource.mode
         action :create
       end
