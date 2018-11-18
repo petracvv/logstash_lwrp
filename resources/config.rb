@@ -18,7 +18,7 @@
 #
 resource_name :logstash_config
 
-property :instance, String, name_attribute: true
+property :instance, String, name_property: true
 property :mode, String, default: '0640'
 property :node_name, String, default: node['hostname']
 property :path_data, String, default: lazy { |r| "/opt/logstash_#{r.instance}/data" }
