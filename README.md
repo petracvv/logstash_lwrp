@@ -4,6 +4,8 @@ A resource-driven [Chef](http://chef.io) cookbook for installing and running [Lo
 
 Provides resources for installing, configuring and running the [currently supported versions](https://www.elastic.co/support/eol) of the Logstash application.
 
+**Installation of Logstash prerequisites such as Java are out-of-scope for this cookbook**
+
 ## Supported Software / Platforms
 
 ### Platforms
@@ -225,6 +227,13 @@ logstash_service 'testing' do
   action [:start, :enable]
 end
 ```
+
+## Acknowledgements
+
+Thanks to:
+
+- The [tomcat cookbook](https://github.com/chef-cookbooks/tomcat) authors for inspiration for the logstash_install resource pattern.
+- The [haproxy cookbook](https://github.com/sous-chefs/haproxy) authors for great examples of the Chef accumulator pattern
 
 ## License & Authors
 
