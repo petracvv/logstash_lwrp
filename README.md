@@ -73,10 +73,10 @@ logstash_install installs an instance of the Logstash application using the offi
 |ls_user|User Logstash will run under|`'logstash'`|String|
 |ls_group|Group Logstash will run under|`'logstash'`|String|
 |ls_shell|Shell assigned to Logstash user|`'/sbin/nologin'`|String|
-|install_path|Where to extract the logstash tarball|`lazy { |r| "/opt/logstash_#{r.instance}_#{r.version.tr('.', '_')}/" }`|String|
+|install_path|Where to extract the logstash tarball|`lazy { \|r\| "/opt/logstash_#{r.instance}_#{r.version.tr('.', '_')}/" }`|String|
 |install_mode|Permissions for install directory|`'0750'`|String|
-|tarball_uri|Location of Logstash tarball|`lazy { |r| "https://artifacts.elastic.co/downloads/logstash/logstash-#{r.version}.tar.gz" }`|String|
-|checksum_uri|Location of checksum for Logstash tarball|`lazy { |r| "https://artifacts.elastic.co/downloads/logstash/logstash-#{r.version}.tar.gz.sha512" }`|String|
+|tarball_uri|Location of Logstash tarball|`lazy { \|r\| "https://artifacts.elastic.co/downloads/logstash/logstash-#{r.version}.tar.gz" }`|String|
+|checksum_uri|Location of checksum for Logstash tarball|`lazy { \|r\| "https://artifacts.elastic.co/downloads/logstash/logstash-#{r.version}.tar.gz.sha512" }`|String|
 
 #### Examples
 
@@ -104,8 +104,8 @@ Installs the base Logstash configuration into the `logstath.yml` file. **If you 
 |instance|Name of the installation|nil|String|
 |mode|Permission mode of the `logstash.yml` file|`'0640'`|String|
 |node_name|Name of the logstash node|`node['hostname']`|String|
-|path_data|Location of persistent Logstash data|`lazy { |r| "/opt/logstash_#{r.instance}/data" }`|String|
-|path_logs|Location of Logstash log files|`lazy { |r| "/opt/logstash_#{r.instance}/logs" }`|String|
+|path_data|Location of persistent Logstash data|`lazy { \|r\| "/opt/logstash_#{r.instance}/data" }`|String|
+|path_logs|Location of Logstash log files|`lazy { \|r\| "/opt/logstash_#{r.instance}/logs" }`|String|
 |log_level|Log level of Logstash process|`'info'`|String|
 |log_format|Log format of Logstash process|`'plain'`|String|
 |pipeline_defaults|Default values for pipelines|nil|Hash|
@@ -201,13 +201,13 @@ This resource sets up the Logstash system service and sets the runtime Java opti
 |property|description|default|kind_of|
 |--------|-----------|-------|-------|
 |instance|Name of the Logstash installation|nil|String|
-|service_name|Name of the Logstash service|`lazy { |r| "logstash_#{r.instance}" }`|String|
+|service_name|Name of the Logstash service|`lazy { \|r\| "logstash_#{r.instance}" }`|String|
 |description|Longer description of the service|`'logstash'`|String|
 |javacmd|Path to java binary|`'/usr/bin/java'`|String|
-|ls_settings_dir|Directory with logstash.yml file|`lazy { |r| "/opt/logstash_#{r.instance}/config" }`|String|
-|ls_opts|Command line arguments to Logstash|`lazy { |r| ["--path.settings #{r.ls_settings_dir}"] }`|Array|
-|ls_pidfile|Path to Logstash pidfile (only relevant for sysv)|`lazy { |r| "/var/run/#{r.service_name}.pid" }`|String|
-|ls_gc_log_file|Path to Logstash log file for Java GC|`lazy { |r| "/opt/logstash_#{r.instance}/logs/#{r.service_name}_gc.log" }`|String|
+|ls_settings_dir|Directory with logstash.yml file|`lazy { \|r\| "/opt/logstash_#{r.instance}/config" }`|String|
+|ls_opts|Command line arguments to Logstash|`lazy { \|r\| ["--path.settings #{r.ls_settings_dir}"] }`|Array|
+|ls_pidfile|Path to Logstash pidfile (only relevant for sysv)|`lazy { \|r\| "/var/run/#{r.service_name}.pid" }`|String|
+|ls_gc_log_file|Path to Logstash log file for Java GC|`lazy { \|r\| "/opt/logstash_#{r.instance}/logs/#{r.service_name}_gc.log" }`|String|
 |ls_open_files|Open file limit for Logstash service|16384|Integer|
 |ls_nice|Nice value for logstash process|19|Integer|
 |ls_prestart|Command or script to run before Logstash service starts|nil|String|
