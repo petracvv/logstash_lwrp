@@ -157,10 +157,10 @@ If supplied with a `config_templates` property, `logstash_pipeline` will create 
 |--------|-----------|-------|-------|
 |pipeline_id|Name of the pipeline|nil|String|
 |instance|Name of the installation|nil|String|
-|mode|Permission mode of the pipelines.yml file|String|
+|mode|Permission mode of the pipelines.yml file|`'0640'`|String|
 |pipeline_workers|Number of threads for this pipeline|`node['cpu']['cores']`|Integer|
 |config_string|Logstash pipeline configuration in one string|nil|String|
-|config_templates|Array of template names to deploy as the Logstash pipeline configuration|Array|
+|config_templates|Array of template names to deploy as the Logstash pipeline configuration|nil|Array|
 |pipeline_settings|Other pipeline configuration options|nil|Hash|
 
 #### Examples
