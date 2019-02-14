@@ -69,7 +69,7 @@ action :install do
     source new_resource.tarball_uri
     path tarball_path
     verify { |tarball| validate_checksum(tarball) }
-    only_if { ::Dir.empty?(new_resource.install_path) }  # Avoid redownloading entire logstash tarball every chef run
+    only_if { ::Dir.empty?(new_resource.install_path) } # Avoid redownloading entire logstash tarball every chef run
     action :create
     notifies :run, 'execute[extract logstash tarball]', :immediately
   end
@@ -109,7 +109,7 @@ action :upgrade do
       end
       action :run
     end
-    
+
     execute 'copy persistent data from old install' do
       command "cp -a #{oldinstall}/data #{logstash_home}/"
       user new_resource.ls_user
@@ -120,8 +120,6 @@ action :upgrade do
     action_install
   end
 end
-
-
 
 action_class do
   include ::LogstashLWRP::Helpers

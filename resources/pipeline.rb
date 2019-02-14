@@ -44,8 +44,8 @@ action :create do
   with_run_context :root do
     edit_resource(:template, "#{logstash_home}/config/pipelines.yml") do
       source 'config/pipelines.yml.erb'
-      owner logstash_user 
-      group logstash_group 
+      owner logstash_user
+      group logstash_group
       mode new_resource.mode
       cookbook 'logstash_lwrp'
       variables['pipelines'] ||= []
