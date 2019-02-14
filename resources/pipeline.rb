@@ -24,6 +24,7 @@ property :mode, String, default: '0640'
 property :pipeline_workers, Integer, default: node['cpu']['cores']
 property :config_string, String
 property :config_templates, Array
+property :config_template_variables, Hash
 property :pipeline_settings, Hash
 
 action :create do
@@ -99,6 +100,7 @@ action_class do
         owner logstash_user
         group logstash_group
         mode new_resource.mode
+        variables new_resource.config_template_variables if property_is_set?(:config_template_variables)
         action :create
       end
     end
