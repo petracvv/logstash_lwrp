@@ -102,6 +102,14 @@ describe file('/opt/logstash_kitchen/config/startup.options') do
   its('content') { should match /SERVICE_DESCRIPTION="logstash"/ }
 end
 
+describe file('/opt/logstash_kitchen/pipelines/testing/logstash-sample.conf') do
+  it { should exist }
+  its('owner') { should eq 'logstash' }
+  its('group') { should eq 'logstash' }
+  its('mode') { should cmp '0640' }
+  its('content') { should match /id => "SampleTest-Input"/ }
+end
+
 # Centos 6 needs upstart specified
 if os.release.start_with?('6')
   describe upstart_service('logstash_kitchen') do

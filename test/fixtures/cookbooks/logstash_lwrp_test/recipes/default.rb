@@ -38,6 +38,9 @@ logstash_pipeline 'testing' do
   instance 'kitchen'
   pipeline_workers 1
   config_templates %w( logstash-sample.conf.erb )
+  config_template_variables(
+    'inputID' => 'SampleTest-Input'
+  )
   action :create
 end
 

@@ -100,7 +100,7 @@ action_class do
         owner logstash_user
         group logstash_group
         mode new_resource.mode
-        variables new_resource.config_template_variables if property_is_set?(:config_template_variables)
+        variables new_resource.config_template_variables
         action :create
       end
     end
