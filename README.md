@@ -1,5 +1,7 @@
 # logstash_lwrp chef cookbook
 
+[![CircleCI](https://circleci.com/gh/petracvv/logstash_lwrp/tree/master.svg?style=svg)](https://circleci.com/gh/petracvv/logstash_lwrp/tree/master) [![Cookbook Version](https://img.shields.io/cookbook/v/logstash_lwrp.svg)](https://supermarket.chef.io/cookbooks/logstash_lwrp)
+
 A resource-driven [Chef](http://chef.io) cookbook for installing and running [Logstash](http://elastic.co/products/logstash) on GNU/Linux systems.
 
 Provides resources for installing, configuring and running the [currently supported versions](https://www.elastic.co/support/eol) of the Logstash application.
