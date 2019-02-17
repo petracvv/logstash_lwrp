@@ -50,4 +50,4 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[logstash_lwrp-test::default]
+      - recipe[logstash_lwrp_test::default]

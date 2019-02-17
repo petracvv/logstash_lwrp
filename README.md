@@ -163,6 +163,7 @@ If supplied with a `config_templates` property, `logstash_pipeline` will create 
 |pipeline_workers|Number of threads for this pipeline|`node['cpu']['cores']`|Integer|
 |config_string|Logstash pipeline configuration in one string|nil|String|
 |config_templates|Array of template names to deploy as the Logstash pipeline configuration|nil|Array|
+|config_template_variables|Hash of template variables to use in the Logstash pipeline templates|nil|Hash|
 |pipeline_settings|Other pipeline configuration options|nil|Hash|
 
 #### Examples
@@ -178,12 +179,16 @@ logstash_pipeline 'string' do
 end
 ```
 
-Deploy a more complicated Logstash pipeline for the 'testing' Logstash instance using templates in your wrapper cookbook
+Deploy a more complicated Logstash pipeline for the 'testing' Logstash instance using templates and variables in your wrapper cookbook
 
 ```ruby
 logstash_pipeline 'main' do
   instance 'testing'
   config_templates %w( input_syslog.conf.erb output_elasticsearch.conf.erb output_stdout.conf.erb)
+  config_template_variables(
+    'test.id' => '321',
+    'test.name' => 'Variables'
+  )
   action :create
 end
 ```

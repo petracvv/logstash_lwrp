@@ -3,7 +3,6 @@
 ### Resources
 
 - Add cookbook override property for logstash_pipeline.
-- Add template variables property for logstash_pipeline.
   
 ### Testing
 
