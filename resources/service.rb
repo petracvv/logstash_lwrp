@@ -88,15 +88,14 @@ action_class do
   def service_provider
     available = Chef::Platform::ServiceHelpers.service_resource_providers
 
-    # Service providers in same order of preference as the logstash generator 
-    case
-    when available.include?(:systemd)
+    # Service providers in same order of preference as the logstash generator
+    if available.include?(:systemd)
       Chef::Provider::Service::Systemd
-    when available.include?(:upstart)
+    elsif available.include?(:upstart)
       Chef::Provider::Service::Upstart
-    when available.include?(:debian)
+    elsif available.include?(:debian)
       Chef::Provider::Service::Init::Debian
-    when available.include?(:redhat)
+    elsif available.include?(:redhat)
       Chef::Provider::Service::Init::Redhat
     else
       Chef::Log.fatal!('Unsupported init system')
