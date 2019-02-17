@@ -1,5 +1,6 @@
 driver:
   name: dokken
+  hostname: logstash-kitchen
   privileged: true # because Docker and SystemD/Upstart
 
 transport:
@@ -10,12 +11,22 @@ provisioner:
   product_name: chef
   product_version: <%= ENV['CHEF_VERSION'] || 'latest' %>
   install_strategy: once
+  attributes:
+    java:
+      jdk_version: "8"
+    logstash:
+      elasticsearch_uri: 'http://127.0.0.1:9200'
+    rsyslog:
+      server_ip: '127.0.0.1'
+      port: '5959'
 
 verifier:
   name: inspec
 
 platforms:
 - name: debian-8
+  run_list:
+    - recipe[apt::default]
   driver:
     image: dokken/debian-8
     pid_one_command: /bin/systemd
@@ -23,6 +34,8 @@ platforms:
       - RUN /usr/bin/apt-get update
 
 - name: debian-9
+  run_list:
+    - recipe[apt::default]
   driver:
     image: dokken/debian-9
     pid_one_command: /bin/systemd
@@ -40,6 +53,8 @@ platforms:
     pid_one_command: /usr/lib/systemd/systemd
 
 - name: ubuntu-16.04
+  run_list:
+    - recipe[apt::default]
   driver:
     image: dokken/ubuntu-16.04
     pid_one_command: /bin/systemd
@@ -47,6 +62,8 @@ platforms:
       - RUN /usr/bin/apt-get update
 
 - name: ubuntu-18.04
+  run_list:
+    - recipe[apt::default]
   driver:
     image: dokken/ubuntu-18.04
     pid_one_command: /bin/systemd
