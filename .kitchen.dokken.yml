@@ -46,6 +46,8 @@ platforms:
   driver:
     image: dokken/centos-6
     pid_one_command: /sbin/init
+    intermediate_instructions:
+      - RUN /bin/sed -i '/HOSTNAME/d' /etc/sysconfig/network
 
 - name: centos-7
   driver:
