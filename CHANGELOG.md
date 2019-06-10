@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the logstash_lwrp cookbook.
 
+## v1.2.0
+
+ - Update to support Logstash 7.x
+ - Add ChefSpec test coverage
+ - Add systemd_unit_content property to logstash_service for custom systemd unit config
+ - Update to latest Circle CI test workflow
+
 ## v1.1.0 (2019-02-17)
 
 - Add template variables property for logstash_pipeline.
