@@ -79,7 +79,6 @@ describe file('/opt/logstash_kitchen/config/jvm.options') do
   its('mode') { should cmp '0640' }
   its('content') { should match /-Xms256M/ }
   its('content') { should match /-Xmx256M/ }
-  its('content') { should match /-XX:\+UseParNewGC/ }
   its('content') { should match /-Djava.awt.headless=true/ }
 end
 

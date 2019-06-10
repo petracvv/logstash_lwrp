@@ -6,6 +6,9 @@
 .*.sw[a-z]
 *.un~
 
+# Rbenv
+.ruby-version
+
 # Bundler
 Gemfile.lock
 gems.locked

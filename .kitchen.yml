@@ -31,8 +31,6 @@ platforms:
     run_list:
       - recipe[apt::default]
   - name: debian-8
-    run_list:
-      - recipe[apt::default]
   - name: debian-9
     run_list:
       - recipe[apt::default]
@@ -42,5 +40,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[java::default]
       - recipe[logstash_lwrp_test::default]
+    attributes:
+      apt:
+        compile_time_update: true
