@@ -26,7 +26,7 @@ if node['platform_family'] == 'debian' && node['platform_version'] =~ /^8/
   end.run_action(:install)
 end
 
-include_recipe 'apt::default' if node['platform_family'] == 'debian' 
+include_recipe 'apt::default' if node['platform_family'] == 'debian'
 
 logstash_install 'kitchen' do
   version '7.1.0'
