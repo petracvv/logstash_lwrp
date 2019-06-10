@@ -1,8 +1,6 @@
 driver:
   name: dokken
   hostname: logstash-kitchen
-  env: 
-    CHEF_LICENSE: accept-no-persist
   privileged: true # because Docker and SystemD/Upstart
 
 transport:
@@ -13,6 +11,8 @@ provisioner:
   product_name: chef
   product_version: <%= ENV['CHEF_VERSION'] || 'latest' %>
   install_strategy: once
+  client_rb:
+    chef_license: accept-no-persist 
   attributes:
     java:
       jdk_version: "8"
