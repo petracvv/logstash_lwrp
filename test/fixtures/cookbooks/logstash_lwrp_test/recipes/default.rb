@@ -24,9 +24,9 @@ if node['platform_family'] == 'debian' && node['platform_version'] =~ /^8/
   package 'apt-transport-https' do
     action :nothing
   end.run_action(:install)
-
-  include_recipe 'apt::default'
 end
+
+include_recipe 'apt::default' if node['platform_family'] == 'debian' 
 
 logstash_install 'kitchen' do
   version '7.1.0'
