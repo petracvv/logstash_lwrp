@@ -1,6 +1,8 @@
 driver:
   name: dokken
   hostname: logstash-kitchen
+  env: 
+    CHEF_LICENSE: accept-no-persist
   privileged: true # because Docker and SystemD/Upstart
 
 transport:

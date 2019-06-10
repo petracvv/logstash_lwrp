@@ -20,6 +20,7 @@ resource_name :logstash_service
 
 property :instance, String, name_property: true
 property :service_name, String, default: lazy { |r| "logstash_#{r.instance}" }
+property :systemd_unit_content, String
 property :description, String, default: 'logstash'
 property :javacmd, String, default: '/usr/bin/java'
 property :ls_settings_dir, String, default: lazy { |r| "/opt/logstash_#{r.instance}/config" }
@@ -35,8 +36,7 @@ property :ls_nice, Integer, default: 19, callbacks: {
 property :ls_prestart, String
 property :xms, String, default: node['memory'] ? "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M" : '1G'
 property :xmx, String, default: node['memory'] ? "#{(node['memory']['total'].to_i * 0.6).floor / 1024}M" : '1G'
-property :gc_opts, Array, default: ['-XX:+UseParNewGC',
-                                    '-XX:+UseConcMarkSweepGC',
+property :gc_opts, Array, default: ['-XX:+UseConcMarkSweepGC',
                                     '-XX:CMSInitiatingOccupancyFraction=75',
                                     '-XX:+UseCMSInitiatingOccupancyOnly']
 property :java_opts, Array, default: ['-Djava.awt.headless=true',
@@ -89,7 +89,7 @@ action_class do
     available = Chef::Platform::ServiceHelpers.service_resource_providers
 
     # Service providers in same order of preference as the logstash generator
-    if available.include?(:systemd)
+    if available.include?(:systemd) || property_is_set?(:systemd_unit_content)
       Chef::Provider::Service::Systemd
     elsif available.include?(:upstart)
       Chef::Provider::Service::Upstart
@@ -98,7 +98,8 @@ action_class do
     elsif available.include?(:redhat)
       Chef::Provider::Service::Init::Redhat
     else
-      Chef::Log.fatal!('Unsupported init system')
+      Chef::Log.fatal('Unsupported init system')
+      raise
     end
   end
 
@@ -118,36 +119,45 @@ action_class do
       action :create
     end
 
-    template "#{new_resource.ls_settings_dir}/startup.options" do
-      source 'init/startup.options.erb'
-      owner logstash_user
-      group logstash_group
-      mode '0640'
-      cookbook 'logstash_lwrp'
-      variables(
-        javacmd: new_resource.javacmd,
-        ls_home: logstash_home,
-        ls_settings_dir: new_resource.ls_settings_dir,
-        ls_opts: new_resource.ls_opts,
-        ls_pidfile: new_resource.ls_pidfile,
-        ls_user: logstash_user,
-        ls_group: logstash_group,
-        ls_gc_log_file: new_resource.ls_gc_log_file,
-        ls_open_files: new_resource.ls_open_files,
-        ls_nice: new_resource.ls_nice,
-        ls_service_name: new_resource.service_name,
-        ls_service_description: new_resource.description,
-        ls_prestart: new_resource.ls_prestart
-      )
-      action :create
-      notifies :run, 'execute[Generate service file]', :immediately
-      notifies :restart, "logstash_service[#{new_resource.instance}]", :delayed
-    end
+    if property_is_set?(:systemd_unit_content)
 
-    execute 'Generate service file' do
-      command "#{logstash_home}/bin/system-install #{new_resource.ls_settings_dir}/startup.options"
-      user 'root'
-      action :nothing
+      systemd_unit "#{new_resource.service_name}.service" do
+        content new_resource.systemd_unit_content
+        action :create
+      end
+
+    else
+      template "#{new_resource.ls_settings_dir}/startup.options" do
+        source 'init/startup.options.erb'
+        owner logstash_user
+        group logstash_group
+        mode '0640'
+        cookbook 'logstash_lwrp'
+        variables(
+          javacmd: new_resource.javacmd,
+          ls_home: logstash_home,
+          ls_settings_dir: new_resource.ls_settings_dir,
+          ls_opts: new_resource.ls_opts,
+          ls_pidfile: new_resource.ls_pidfile,
+          ls_user: logstash_user,
+          ls_group: logstash_group,
+          ls_gc_log_file: new_resource.ls_gc_log_file,
+          ls_open_files: new_resource.ls_open_files,
+          ls_nice: new_resource.ls_nice,
+          ls_service_name: new_resource.service_name,
+          ls_service_description: new_resource.description,
+          ls_prestart: new_resource.ls_prestart
+        )
+        action :create
+        notifies :run, 'execute[Generate service file]', :immediately
+        notifies :restart, "logstash_service[#{new_resource.instance}]", :delayed
+      end
+
+      execute 'Generate service file' do
+        command "#{logstash_home}/bin/system-install #{new_resource.ls_settings_dir}/startup.options"
+        user 'root'
+        action :nothing
+      end
     end
   end
 end

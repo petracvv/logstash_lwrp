@@ -1,3 +1,6 @@
+include_recipe 'java::default'
+include_recipe 'rsyslog::client'
+
 include_recipe 'elasticsearch'
 es_conf = resources('elasticsearch_configure[elasticsearch]')
 es_conf.allocated_memory '128m'
@@ -5,17 +8,28 @@ es_svc = resources('elasticsearch_service[elasticsearch]')
 es_svc.service_actions [:enable, :start]
 
 # Debian 8 only has java-8 in backports
-bash 'Enable backports for java-8' do
-  code <<-EOH
-  echo -e "deb http://ftp.us.debian.org/debian/ jessie-backports main" >> /etc/apt/sources.list
-  echo -e "Package: openjdk* openjre* *java*\nPin: release a=jessie-backports\nPin-Priority: 900\n" >> /etc/apt/preferences
-  EOH
-  only_if { node['platform_family'] == 'debian' && node['platform_version'] =~ /^8/ }
-  not_if 'grep jessie-backports /etc/apt/sources.list'
-end.run_action(:run)
+if node['platform_family'] == 'debian' && node['platform_version'] =~ /^8/
+
+  bash 'Enable backports for java-8' do
+    code <<-EOH
+    sed -i '/jessie-updates/d' /etc/apt/sources.list
+    echo -e "deb http://archive.debian.org/debian/ jessie-backports main contrib non-free" >> /etc/apt/sources.list
+    echo -e "deb-src http://archive.debian.org/debian/ jessie-backports main contrib non-free" >> /etc/apt/sources.list
+    echo -e "Package: openjdk* openjre* *java*\nPin: release a=jessie-backports\nPin-Priority: 900\n" >> /etc/apt/preferences
+    echo -e "Acquire::Check-Valid-Until no;" >> /etc/apt/apt.conf.d/99no-check-valid-until
+    EOH
+    not_if 'grep jessie-backports /etc/apt/sources.list'
+  end.run_action(:run)
+
+  package 'apt-transport-https' do
+    action :nothing
+  end.run_action(:install)
+
+  include_recipe 'apt::default'
+end
 
 logstash_install 'kitchen' do
-  version '6.5.0'
+  version '7.1.0'
   action :upgrade
 end
 
@@ -59,5 +73,3 @@ logstash_service 'kitchen' do
   xmx '256M'
   action [:start, :enable]
 end
-
-include_recipe 'rsyslog::client'

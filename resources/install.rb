@@ -22,7 +22,7 @@
 resource_name :logstash_install
 
 property :instance, String, name_property: true
-property :version,  String, default: '6.5.0', callbacks: {
+property :version,  String, default: '7.1.0', callbacks: {
   'should be in X.Y.Z format' => lambda { |v|
     v =~ /\d+.\d+.\d+/
   },
