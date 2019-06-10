@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the logstash_lwrp cookbook.
 
-## v1.2.0
+## v1.2.0 (2019-06-10)
 
  - Update to support Logstash 7.x
  - Add ChefSpec test coverage
