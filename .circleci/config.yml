@@ -12,16 +12,8 @@ workflows:
       - kitchen/delivery:
           name: delivery
       - kitchen/dokken-single:
-          name: default-debian-8
-          suite: default-debian-8
-          requires: [  danger, delivery ]
-      - kitchen/dokken-single:
           name: default-debian-9
           suite: default-debian-9
-          requires: [  danger, delivery ]
-      - kitchen/dokken-single:
-          name: default-centos-6
-          suite: default-centos-6
           requires: [  danger, delivery ]
       - kitchen/dokken-single:
           name: default-centos-7
