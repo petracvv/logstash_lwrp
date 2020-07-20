@@ -28,10 +28,18 @@ workflows:
           suite: default-centos-7
           requires: [  danger, delivery ]
       - kitchen/dokken-single:
+          name: default-centos-8
+          suite: default-centos-8
+          requires: [  danger, delivery ]
+      - kitchen/dokken-single:
           name: default-ubuntu-1604
           suite: default-ubuntu-1604
           requires: [  danger, delivery ]
       - kitchen/dokken-single:
           name: default-ubuntu-1804
           suite: default-ubuntu-1804
+          requires: [  danger, delivery ]
+      - kitchen/dokken-single:
+          name: default-ubuntu-2004
+          suite: default-ubuntu-2004
           requires: [  danger, delivery ]
