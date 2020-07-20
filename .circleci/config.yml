@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  kitchen: sous-chefs/kitchen@2.0.2
+  kitchen: sous-chefs/kitchen@2.1.1
 
 workflows:
   kitchen:
@@ -12,20 +12,16 @@ workflows:
       - kitchen/delivery:
           name: delivery
       - kitchen/dokken-single:
-          name: default-debian-8
-          suite: default-debian-8
-          requires: [  danger, delivery ]
-      - kitchen/dokken-single:
           name: default-debian-9
           suite: default-debian-9
           requires: [  danger, delivery ]
       - kitchen/dokken-single:
-          name: default-centos-6
-          suite: default-centos-6
-          requires: [  danger, delivery ]
-      - kitchen/dokken-single:
           name: default-centos-7
           suite: default-centos-7
+          requires: [  danger, delivery ]
+      - kitchen/dokken-single:
+          name: default-centos-8
+          suite: default-centos-8
           requires: [  danger, delivery ]
       - kitchen/dokken-single:
           name: default-ubuntu-1604
@@ -34,4 +30,8 @@ workflows:
       - kitchen/dokken-single:
           name: default-ubuntu-1804
           suite: default-ubuntu-1804
+          requires: [  danger, delivery ]
+      - kitchen/dokken-single:
+          name: default-ubuntu-2004
+          suite: default-ubuntu-2004
           requires: [  danger, delivery ]
