@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 resource_name :logstash_pipeline
+provides :logstash_pipeline
 
 property :pipeline_id, String, name_property: true
 property :instance, String, required: true

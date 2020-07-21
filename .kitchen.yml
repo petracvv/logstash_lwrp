@@ -13,7 +13,7 @@ verifier:
 provisioner:
   name: chef_zero
   product_name: chef
-  product_version: 14
+  product_version: 16
   attributes:
     java:
       jdk_version: "8"

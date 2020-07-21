@@ -17,10 +17,11 @@
 # limitations under the License.
 #
 resource_name :logstash_config
+provides :logstash_config
 
 property :instance, String, name_property: true
 property :mode, String, default: '0640'
-property :node_name, String, default: node['hostname']
+property :node_name, String, default: lazy { node['hostname'] }
 property :path_data, String, default: lazy { |r| "/opt/logstash_#{r.instance}/data" }
 property :path_logs, String, default: lazy { |r| "/opt/logstash_#{r.instance}/logs" }
 property :log_level, String, default: 'info', equal_to: %w( info fatal error warn debug trace )

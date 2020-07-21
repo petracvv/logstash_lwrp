@@ -1,4 +1,5 @@
-include_recipe 'java::default'
+openjdk_install '11'
+
 include_recipe 'rsyslog::client'
 
 include_recipe 'elasticsearch'
@@ -8,7 +9,7 @@ es_svc = resources('elasticsearch_service[elasticsearch]')
 es_svc.service_actions [:enable, :start]
 
 # Debian 8 only has java-8 in backports
-if node['platform_family'] == 'debian' && node['platform_version'] =~ /^8/
+if platform_family?('debian') && node['platform_version'] =~ /^8/
 
   bash 'Enable backports for java-8' do
     code <<-EOH
@@ -26,7 +27,11 @@ if node['platform_family'] == 'debian' && node['platform_version'] =~ /^8/
   end.run_action(:install)
 end
 
-include_recipe 'apt::default' if node['platform_family'] == 'debian'
+if platform_family?('debian')
+  apt_update 'update' do
+    action :update
+  end
+end
 
 logstash_install 'kitchen' do
   version '7.1.0'

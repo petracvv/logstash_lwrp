@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the logstash_lwrp cookbook.
 
+## v2.0.0 (2020-07-21)
+
+ - Update to support Chef 16
+ - Bump required chef version to v15.8
+
 ## v1.2.0 (2019-06-10)
 
  - Update to support Logstash 7.x

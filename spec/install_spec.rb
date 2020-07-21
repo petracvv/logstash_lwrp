@@ -65,8 +65,7 @@ describe 'logstash_install' do
       logstash_service 'test'
     end
 
-    it { is_expected.to write_log('stop logstash service before upgrade') }
-    it { expect(chef_run.log('stop logstash service before upgrade')).to notify('logstash_service[test]').to(:stop).immediately }
+    it { expect(chef_run.notify_group('stop logstash service before upgrade')).to notify('logstash_service[test]').to(:stop).immediately }
 
     it { is_expected.to run_ruby_block('Install new version') }
 

@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 resource_name :logstash_service
+provides :logstash_service
 
 property :instance, String, name_property: true
 property :service_name, String, default: lazy { |r| "logstash_#{r.instance}" }

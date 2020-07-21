@@ -20,6 +20,7 @@
 # https://github.com/chef-cookbooks/tomcat/blob/master/resources/install.rb
 
 resource_name :logstash_install
+provides :logstash_install
 
 property :instance, String, name_property: true
 property :version,  String, default: '7.1.0', callbacks: {
@@ -97,7 +98,8 @@ action :upgrade do
     oldinstall = ::File.realpath(logstash_home)
     oldversion = oldinstall[/[0-9]+_[0-9]+_[0-9]+/].tr('_', '.')
 
-    log 'stop logstash service before upgrade' do
+    notify_group 'stop logstash service before upgrade' do
+      action :run
       notifies :stop, "logstash_service[#{new_resource.instance}]", :immediately
       not_if { oldversion.eql?(new_resource.version) }
     end
