@@ -30,12 +30,14 @@ platforms:
   - name: ubuntu-18.04
     run_list:
       - recipe[apt::default]
-  - name: debian-8
+  - name: ubuntu-20.04
+    run_list:
+      - recipe[apt::default]
   - name: debian-9
     run_list:
       - recipe[apt::default]
-  - name: centos-6
   - name: centos-7
+  - name: centos-8
 
 suites:
   - name: default
