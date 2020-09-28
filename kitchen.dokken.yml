@@ -26,12 +26,6 @@ verifier:
   name: inspec
 
 platforms:
-- name: debian-8
-  run_list:
-  driver:
-    image: dokken/debian-8
-    pid_one_command: /bin/systemd
-
 - name: debian-9
   run_list:
     - recipe[apt::default]
@@ -39,16 +33,14 @@ platforms:
     image: dokken/debian-9
     pid_one_command: /bin/systemd
 
-- name: centos-6
-  driver:
-    image: dokken/centos-6
-    pid_one_command: /sbin/init
-    intermediate_instructions:
-      - RUN /bin/sed -i '/HOSTNAME/d' /etc/sysconfig/network
-
 - name: centos-7
   driver:
     image: dokken/centos-7
+    pid_one_command: /usr/lib/systemd/systemd
+
+- name: centos-8
+  driver:
+    image: dokken/centos-8
     pid_one_command: /usr/lib/systemd/systemd
 
 - name: ubuntu-16.04
@@ -63,4 +55,11 @@ platforms:
     - recipe[apt::default]
   driver:
     image: dokken/ubuntu-18.04
+    pid_one_command: /bin/systemd
+
+- name: ubuntu-20.04
+  run_list:
+    - recipe[apt::default]
+  driver:
+    image: dokken/ubuntu-20.04
     pid_one_command: /bin/systemd
