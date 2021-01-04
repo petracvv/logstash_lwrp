@@ -2,17 +2,21 @@
 
 This file is used to list changes made in each version of the logstash_lwrp cookbook.
 
+## Unreleased
+
+- Fix for YAML not being loaded by default in newer chef 16 versions
+
 ## v2.0.0 (2020-07-21)
 
- - Update to support Chef 16
- - Bump required chef version to v15.8
+- Update to support Chef 16
+- Bump required chef version to v15.8
 
 ## v1.2.0 (2019-06-10)
 
- - Update to support Logstash 7.x
- - Add ChefSpec test coverage
- - Add systemd_unit_content property to logstash_service for custom systemd unit config
- - Update to latest Circle CI test workflow
+- Update to support Logstash 7.x
+- Add ChefSpec test coverage
+- Add systemd_unit_content property to logstash_service for custom systemd unit config
+- Update to latest Circle CI test workflow
 
 ## v1.1.0 (2019-02-17)
 
