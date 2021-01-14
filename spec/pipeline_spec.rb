@@ -63,7 +63,8 @@ describe 'logstash_pipeline' do
       is_expected.to render_file('/opt/logstash_test/config/pipelines.yml').with_content { |content|
         expect(content).to include('pipeline.id: example2')
         expect(content).to include('pipeline.workers: 1')
-        expect(content).to include('config.string: input { generator {} } filter { sleep { time => 1 } } output { stdout { codec => dots } }')
+        expect(content).to include('config.string: input { generator {} } filter { sleep { time => 1 } } output { stdout')
+        expect(content).to include('{ codec => dots } }')
       }
     end
 

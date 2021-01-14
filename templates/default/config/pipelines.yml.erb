@@ -1,6 +1,5 @@
 # Managed by Chef
-
-<%= @pipelines.to_yaml(line_width: -1) %>
+<%= YAML.dump(@pipelines) %>
 
 # Available options:
 #
