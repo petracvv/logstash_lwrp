@@ -24,9 +24,6 @@ provisioner:
       port: '5959'
 
 platforms:
-  - name: ubuntu-16.04
-    run_list:
-      - recipe[apt::default]
   - name: ubuntu-18.04
     run_list:
       - recipe[apt::default]

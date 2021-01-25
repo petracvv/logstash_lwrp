@@ -43,13 +43,6 @@ platforms:
     image: dokken/centos-8
     pid_one_command: /usr/lib/systemd/systemd
 
-- name: ubuntu-16.04
-  run_list:
-    - recipe[apt::default]
-  driver:
-    image: dokken/ubuntu-16.04
-    pid_one_command: /bin/systemd
-
 - name: ubuntu-18.04
   run_list:
     - recipe[apt::default]

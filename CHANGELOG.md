@@ -4,7 +4,10 @@ This file is used to list changes made in each version of the logstash_lwrp cook
 
 ## Unreleased
 
+## v2.1.0 (2021-01-24)
+
 - Fix for YAML not being loaded by default in newer chef 16 versions
+- Remove Ubuntu 16.04 as a tested platform (EOL in April)
 
 ## v2.0.0 (2020-07-21)
 
