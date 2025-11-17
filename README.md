@@ -1,5 +1,7 @@
 # logstash_lwrp chef cookbook
 
+**This repository has not been maintained for a long time and has been archived**
+
 [![CircleCI](https://circleci.com/gh/petracvv/logstash_lwrp/tree/master.svg?style=svg)](https://circleci.com/gh/petracvv/logstash_lwrp/tree/master) [![Cookbook Version](https://img.shields.io/cookbook/v/logstash_lwrp.svg)](https://supermarket.chef.io/cookbooks/logstash_lwrp)
 
 A resource-driven [Chef](http://chef.io) cookbook for installing and running [Logstash](http://elastic.co/products/logstash) on GNU/Linux systems.
